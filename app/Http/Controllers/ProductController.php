@@ -4,6 +4,10 @@ namespace App\Http\Controllers;
 
 use App\Models\Product;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Auth;
+
 
 class ProductController extends Controller
 {
@@ -15,7 +19,8 @@ class ProductController extends Controller
     public function index()
     {
         $products= Product::All();
-        return $products;
+        return response()->json(['succes'=>true,'products'=>$products],200);
+        
     }
 
     /**
@@ -34,9 +39,23 @@ class ProductController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
+    public function upProduct(Request $request)
     {
-        //
+        $validations= request()->validate([
+            'nombre'=>'required',
+            'descripcion'=>'required',
+            'precio'=>'required',
+        ]);
+        if(isset( $validations))
+        {
+            $product= new Product();
+            $product->nombre= $request->nombre;
+            $product->descripcion= $request->descripcion;
+            $product->precio= $request->precio;
+            $product->save();
+            return response()->json(['succes'=>true,'product'=>$product],200);
+        }
+       
     }
 
     /**
@@ -70,7 +89,20 @@ class ProductController extends Controller
      */
     public function update(Request $request, Product $product)
     {
-        //
+        $validations=Validator::make($request->all(),[
+            'nombre'=>'required',
+            'descripcion'=>'required',
+            'precio'=>'required',
+        ]);
+        if($validations->fails()){
+            return response()->json($validations->errors());
+        }
+         $product=Product::findOrfail($request->id);
+         $product->nombre=$request->nombre;
+         $product->descripcion=$request->descripcion;
+         $product->precio=$request->precio;
+         $product->save();
+         return response()->json(['succes'=>true,'product'=>$product],200);
     }
 
     /**
@@ -79,8 +111,9 @@ class ProductController extends Controller
      * @param  \App\Models\Product  $product
      * @return \Illuminate\Http\Response
      */
-    public function destroy(Product $product)
+    public function destroy(Request $request,Product $product)
     {
-        //
+        $product=Product::destroy($request->id);
+        return response()->json(['succes'=>true,'product'=>'producto eliminado correctamente'],200);
     }
 }

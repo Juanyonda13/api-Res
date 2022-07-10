@@ -55,10 +55,13 @@ class AuthController extends Controller
                 'token_type'=>'Bearer',
                 'user'=>$user
             ]);
+       
     }
 
     public function logout(Request $request){
-        $request->user()->currentAccesToken()->delete();
+
+        
+        auth()->user()->Tokens()->delete();
         return[
             'message'=> 'has cerrado sesión correctamente'
         ];

@@ -31,3 +31,9 @@ Route::get('/logout',[AuthController::class,'logout']);
 Route::middleware('auth:sanctum')->group(function(){
     
 });
+//crear producto
+Route::post('/upProduct',[ProductController::class,'upProduct']);
+//actualizar producto
+Route::put('/update/{id}',[ProductController::class,'update']);
+//eliminar producto
+Route::delete('/destroy/{id}',[ProductController::class,'destroy']);
